@@ -241,14 +241,6 @@ def create_application():
         )
     )
 
-
-    app.add_handler(
-    MessageHandler(
-        filters.VOICE,
-        translate_voice
-    )
-)
-
     # ======================
     # Tin nhắn thường
     # ======================
@@ -261,7 +253,17 @@ def create_application():
         )
     )
 
+    # ======================
+    # Tin nhắn voice
+    # ======================
 
+    app.add_handler(
+        MessageHandler(
+            filters.VOICE,
+            translate_voice
+        )
+    )
+    
     # ======================
     # Error handler
     # ======================
