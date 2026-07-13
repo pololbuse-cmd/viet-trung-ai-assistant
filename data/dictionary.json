@@ -1,1 +1,64 @@
+{
+    "Móng Cái": "芒街",
+    "cửa khẩu Móng Cái": "芒街口岸",
+    "Đông Hưng": "东兴",
+    "cửa khẩu Đông Hưng": "东兴口岸",
+    "Hữu Nghị": "友谊关",
+    "cửa khẩu Hữu Nghị": "友谊关口岸",
 
+    "hàng hóa": "货物",
+    "lô hàng": "批货",
+    "đơn hàng": "订单",
+    "hợp đồng": "合同",
+    "báo giá": "报价",
+
+    "xuất khẩu": "出口",
+    "nhập khẩu": "进口",
+    "xuất nhập khẩu": "进出口",
+
+    "vận chuyển": "运输",
+    "xe tải": "卡车",
+    "xe hàng": "货车",
+    "container": "集装箱",
+    "đóng container": "装柜",
+    "rút hàng": "卸柜",
+
+    "kho": "仓库",
+    "kho hàng": "仓库",
+    "nhập kho": "入库",
+    "xuất kho": "出库",
+
+    "hải quan": "海关",
+    "thông quan": "清关",
+    "tờ khai": "报关单",
+
+    "thanh toán": "付款",
+    "chuyển khoản": "银行转账",
+    "tiền hàng": "货款",
+    "đã nhận tiền": "已经收到货款",
+
+    "hạt tiêu": "黑胡椒",
+    "hạt điều": "腰果",
+    "cao su": "橡胶",
+    "thảo quả": "草果",
+
+    "giao hàng": "交货",
+    "gửi hàng": "发货",
+    "đã gửi hàng": "已经发货",
+    "đã đến": "已经到了",
+    "chưa đến": "还没有到",
+
+    "ngày mai": "明天",
+    "hôm nay": "今天",
+    "ngày kia": "后天",
+
+    "giá": "价格",
+    "giá tốt": "好价格",
+    "giảm giá": "降价",
+
+    "được": "可以",
+    "đồng ý": "同意",
+    "chính xác": "正确",
+    "kiểm tra": "检查",
+    "xác nhận": "确认"
+}
