@@ -19,6 +19,7 @@ from app.commands import (
 )
 
 from app.translator import translate
+from app.voice import speech_to_text
 from app.filters import should_translate
 from app.utils import (
     clean_text,
