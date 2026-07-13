@@ -1,4 +1,4 @@
-# 🇻🇳🇨🇳 AI Translator Pro
+# Vietnamese - Chinese AI Translator Pro
 
 Bot Telegram dịch tự động Việt ⇄ Trung sử dụng OpenAI GPT.
 
