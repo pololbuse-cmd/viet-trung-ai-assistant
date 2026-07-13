@@ -1,6 +1,7 @@
 import logging
 
 from telegram import Update
+
 from telegram.ext import (
     Application,
     MessageHandler,
@@ -9,7 +10,9 @@ from telegram.ext import (
     filters
 )
 
+
 from app.config import TELEGRAM_TOKEN
+
 from app.commands import (
     start,
     help_command,
@@ -19,13 +22,17 @@ from app.commands import (
 )
 
 from app.translator import translate
+
 from app.voice import speech_to_text
+
 from app.filters import should_translate
+
 from app.utils import (
     clean_text,
     limit_text,
     log_error
 )
+
 
 
 # ==========================
@@ -41,8 +48,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+
+
+
 # ==========================
-# Xử lý tin nhắn
+# Xử lý tin nhắn văn bản
 # ==========================
 
 async def translate_message(
@@ -52,141 +62,254 @@ async def translate_message(
 
     try:
 
-        # Không có message
         if not update.message:
             return
 
 
-        # Không xử lý message không có text
         text = update.message.text
+
 
         if not text:
             return
 
 
-        # Không tự dịch tin nhắn của bot
+
+        # Không dịch tin nhắn của bot
+
         if update.message.from_user:
 
             if update.message.from_user.is_bot:
                 return
 
 
-        # Làm sạch nội dung
+
         text = clean_text(text)
 
 
-        # Kiểm tra có cần dịch không
+
         if not should_translate(text):
             return
 
 
-        # Kiểm tra trạng thái nhóm
 
         chat_id = str(
             update.effective_chat.id
         )
 
 
-        # Nếu nhóm chưa có cấu hình
-        # mặc định bật
 
         if chat_id not in group_status:
 
             group_status[chat_id] = True
 
 
-        # Nếu nhóm đã tắt
 
         if not group_status[chat_id]:
+
             return
 
 
-        # Gọi AI dịch
 
-        answer = translate(text)
+        print(
+            f"📩 Text received: {text}"
+        )
+
+
+
+        answer = translate(
+            text
+        )
+
 
 
         if not answer:
+
             return
 
 
-        # Giới hạn độ dài Telegram
 
-        answer = limit_text(answer)
+        answer = limit_text(
+            answer
+        )
+
 
 
         await update.message.reply_text(
+
             answer,
+
             reply_to_message_id=
             update.message.message_id
+
         )
+
+
+
+    except Exception as e:
+
+        log_error(e)
+
+
+
+
+
+
 # ==========================
 # Xử lý tin nhắn giọng nói
 # ==========================
 
 async def translate_voice(
+
     update: Update,
+
     context: ContextTypes.DEFAULT_TYPE
+
 ):
 
-    if not update.message.voice:
-        return
+    try:
 
 
-    voice = await update.message.voice.get_file()
+        if not update.message:
+
+            return
 
 
-    file_path = (
-        "voice.ogg"
-    )
+
+        if not update.message.voice:
+
+            return
 
 
-    await voice.download_to_drive(
-        file_path
-    )
+
+        print(
+            "🎤 Voice message received"
+        )
 
 
-    text = await speech_to_text(
-        file_path
-    )
+
+        voice = await update.message.voice.get_file()
 
 
-    answer = translate(
-        text
-    )
+
+        file_path = "voice.ogg"
 
 
-    await update.message.reply_text(
-        answer
-    )
+
+        await voice.download_to_drive(
+
+            file_path
+
+        )
+
+
+
+        print(
+            "🔊 Voice downloaded"
+        )
+
+
+
+        text = await speech_to_text(
+
+            file_path
+
+        )
+
+
+
+        if not text:
+
+            return
+
+
+
+        print(
+            f"📝 Voice text: {text}"
+        )
+
+
+
+        answer = translate(
+
+            text
+
+        )
+
+
+
+        if not answer:
+
+            return
+
+
+
+        await update.message.reply_text(
+
+            answer,
+
+            reply_to_message_id=
+            update.message.message_id
+
+        )
+
+
+
+        print(
+            "✅ Voice translated"
+        )
+
+
 
     except Exception as e:
 
         log_error(e)
+
+
+
+
+
+
 
 # ==========================
 # Xử lý lỗi toàn hệ thống
 # ==========================
 
 async def error_handler(
+
     update: object,
+
     context: ContextTypes.DEFAULT_TYPE
+
 ):
 
     try:
 
+
         logger.error(
+
             "Exception while handling update:",
+
             exc_info=context.error
+
         )
 
+
         log_error(
+
             context.error
+
         )
+
 
     except Exception as e:
 
+
         log_error(e)
+
+
+
+
+
 
 
 
@@ -196,84 +319,141 @@ async def error_handler(
 
 def create_application():
 
+
     app = (
+
         Application
+
         .builder()
+
         .token(
+
             TELEGRAM_TOKEN
+
         )
+
         .build()
+
     )
 
 
-    # ======================
+
+
     # Commands
-    # ======================
 
     app.add_handler(
+
         CommandHandler(
+
             "start",
+
             start
+
         )
+
     )
 
 
+
     app.add_handler(
+
         CommandHandler(
+
             "help",
+
             help_command
+
         )
+
     )
 
 
+
     app.add_handler(
+
         CommandHandler(
+
             "on",
+
             turn_on
+
         )
+
     )
 
 
+
     app.add_handler(
+
         CommandHandler(
+
             "off",
+
             turn_off
+
         )
+
     )
 
-    # ======================
-    # Tin nhắn thường
-    # ======================
+
+
+
+
+    # Tin nhắn chữ
 
     app.add_handler(
+
         MessageHandler(
+
             filters.TEXT
+
             & ~filters.COMMAND,
+
             translate_message
+
         )
+
     )
 
-    # ======================
+
+
+
+
     # Tin nhắn voice
-    # ======================
 
     app.add_handler(
+
         MessageHandler(
+
             filters.VOICE,
+
             translate_voice
+
         )
+
     )
-    
-    # ======================
-    # Error handler
-    # ======================
+
+
+
+
+
+    # Error Handler
 
     app.add_error_handler(
+
         error_handler
+
     )
+
 
 
     return app
+
+
+
+
+
+
 
 # ==========================
 # Chạy Bot
@@ -281,25 +461,42 @@ def create_application():
 
 def main():
 
+
     try:
+
 
         app = create_application()
 
+
+
         print(
+
             "🤖 AI Translator Pro Bot running..."
+
         )
 
+
+
         logger.info(
+
             "Bot started successfully"
+
         )
+
 
 
         app.run_polling()
 
 
+
     except Exception as e:
 
+
         log_error(e)
+
+
+
+
 
 
 
@@ -310,4 +507,3 @@ def main():
 if __name__ == "__main__":
 
     main()
-
