@@ -120,7 +120,45 @@ async def translate_message(
             reply_to_message_id=
             update.message.message_id
         )
+# ==========================
+# Xử lý tin nhắn giọng nói
+# ==========================
 
+async def translate_voice(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
+
+    if not update.message.voice:
+        return
+
+
+    voice = await update.message.voice.get_file()
+
+
+    file_path = (
+        "voice.ogg"
+    )
+
+
+    await voice.download_to_drive(
+        file_path
+    )
+
+
+    text = await speech_to_text(
+        file_path
+    )
+
+
+    answer = translate(
+        text
+    )
+
+
+    await update.message.reply_text(
+        answer
+    )
 
     except Exception as e:
 
@@ -204,6 +242,12 @@ def create_application():
     )
 
 
+    app.add_handler(
+    MessageHandler(
+        filters.VOICE,
+        translate_voice
+    )
+)
 
     # ======================
     # Tin nhắn thường
