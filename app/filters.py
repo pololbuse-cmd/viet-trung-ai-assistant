@@ -63,7 +63,7 @@ def should_translate(text: str) -> bool:
         return False
 
     # Username Telegram
-    if text.startswith("@"):
+    if text.startswith("@") and " " not in text:
         return False
 
     # Hashtag
