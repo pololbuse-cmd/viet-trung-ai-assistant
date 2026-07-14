@@ -83,13 +83,34 @@ async def translate_message(
 
 
 
+        print(
+            "📥 RAW TEXT:",
+            repr(text)
+        )
+
+
+
         text = clean_text(text)
 
 
 
+        print(
+            "🧹 CLEAN TEXT:",
+            repr(text)
+        )
+
+
+
+        # Kiểm tra filter
+
         if not should_translate(text):
-    print("❌ BỊ FILTER BỎ QUA:", text)
-                return
+
+            print(
+                "❌ BỊ FILTER BỎ QUA:",
+                text
+            )
+
+            return
 
 
 
@@ -107,12 +128,17 @@ async def translate_message(
 
         if not group_status[chat_id]:
 
+            print(
+                "⛔ Nhóm đang tắt dịch"
+            )
+
             return
 
 
 
         print(
-            f"📩 Text received: {text}"
+            "📩 SEND TO AI:",
+            text
         )
 
 
@@ -124,6 +150,10 @@ async def translate_message(
 
 
         if not answer:
+
+            print(
+                "⚠️ AI trả về rỗng"
+            )
 
             return
 
@@ -142,6 +172,12 @@ async def translate_message(
             reply_to_message_id=
             update.message.message_id
 
+        )
+
+
+        print(
+            "✅ TRANSLATED:",
+            answer
         )
 
 
@@ -225,7 +261,8 @@ async def translate_voice(
 
 
         print(
-            f"📝 Voice text: {text}"
+            "📝 Voice text:",
+            text
         )
 
 
@@ -343,57 +380,34 @@ def create_application():
     # Commands
 
     app.add_handler(
-
         CommandHandler(
-
             "start",
-
             start
-
         )
-
     )
 
 
-
     app.add_handler(
-
         CommandHandler(
-
             "help",
-
             help_command
-
         )
-
     )
 
 
-
     app.add_handler(
-
         CommandHandler(
-
             "on",
-
             turn_on
-
         )
-
     )
 
 
-
     app.add_handler(
-
         CommandHandler(
-
             "off",
-
             turn_off
-
         )
-
     )
 
 
@@ -407,7 +421,6 @@ def create_application():
         MessageHandler(
 
             filters.TEXT
-
             & ~filters.COMMAND,
 
             translate_message
@@ -477,13 +490,11 @@ def main():
         )
 
 
-
         logger.info(
 
             "Bot started successfully"
 
         )
-
 
 
         app.run_polling()
