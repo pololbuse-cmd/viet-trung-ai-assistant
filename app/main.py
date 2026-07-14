@@ -88,7 +88,8 @@ async def translate_message(
 
 
         if not should_translate(text):
-            return
+    print("❌ BỊ FILTER BỎ QUA:", text)
+                return
 
 
 
