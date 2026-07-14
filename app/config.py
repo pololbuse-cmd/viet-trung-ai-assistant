@@ -39,7 +39,7 @@ else:
 
 MODEL_NAME = os.getenv(
     "MODEL_NAME",
-    "gpt-5-mini"
+    "gpt-4.1-mini"
 )
 
 # ===========================
