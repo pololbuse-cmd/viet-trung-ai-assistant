@@ -9,6 +9,7 @@ from app.prompts import SYSTEM_PROMPT
 from app.dictionary import dictionary_to_prompt
 from app.language import detect_language
 
+import traceback
 
 client = OpenAI(
     api_key=OPENAI_API_KEY
@@ -31,14 +32,21 @@ def translate(text: str) -> str:
     lang = detect_language(text)
 
     if lang == "zh":
-        direction = "Hãy dịch toàn bộ nội dung sau từ TIẾNG TRUNG sang TIẾNG VIỆT. Không giữ nguyên tiếng Trung."
+        direction = (
+            "Hãy dịch toàn bộ nội dung sau từ TIẾNG TRUNG sang TIẾNG VIỆT. "
+            "Chỉ trả về bản dịch, không giải thích."
+        )
     elif lang == "vi":
-        direction = "Hãy dịch toàn bộ nội dung sau từ TIẾNG VIỆT sang TIẾNG TRUNG GIẢN THỂ."
+        direction = (
+            "Hãy dịch toàn bộ nội dung sau từ TIẾNG VIỆT sang TIẾNG TRUNG GIẢN THỂ. "
+            "Chỉ trả về bản dịch, không giải thích."
+        )
     else:
         direction = (
             "Hãy tự xác định ngôn ngữ. "
             "Nếu là tiếng Trung thì dịch sang tiếng Việt. "
-            "Nếu là tiếng Việt thì dịch sang tiếng Trung."
+            "Nếu là tiếng Việt thì dịch sang tiếng Trung giản thể. "
+            "Chỉ trả về bản dịch."
         )
 
     system_prompt = (
@@ -57,13 +65,13 @@ def translate(text: str) -> str:
             messages=[
                 {
                     "role": "system",
-                    "content": system_prompt
+                    "content": system_prompt,
                 },
                 {
                     "role": "user",
-                    "content": direction + "\n\n" + text
-                }
-            ]
+                    "content": direction + "\n\n" + text,
+                },
+            ],
         )
 
         answer = response.choices[0].message.content
@@ -74,5 +82,10 @@ def translate(text: str) -> str:
         return ""
 
     except Exception as e:
-        print("OpenAI Error:", e)
+        print("=" * 80)
+        print("OpenAI Error")
+        traceback.print_exc()
+        print(repr(e))
+        print("=" * 80)
+
         return "❌ AI đang bận, vui lòng thử lại."
